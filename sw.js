@@ -1,0 +1,5 @@
+const CACHE='discipline-ladder-v9';
+const ASSETS=['./','./index.html','./manifest.json','./app.js','./icon-192.png','./icon-512.png','./icon-192-maskable.png','./icon-512-maskable.png'];
+self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>Promise.all(ASSETS.map(u=>fetch(u,{cache:'no-cache'}).then(r=>r.ok?c.put(u,r):null).catch(()=>null)))))});
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const req=e.request,url=new URL(req.url);if(url.origin!==self.location.origin)return;e.respondWith((async()=>{const c=await caches.open(CACHE),cached=await c.match(req,{ignoreSearch:true});const net=fetch(req).then(r=>{if(r.ok)c.put(req,r.clone());return r}).catch(()=>null);if(cached){e.waitUntil(net);return cached}const r=await net;if(r)return r;if(req.mode==='navigate')return c.match('./index.html');return Response.error()})())});
