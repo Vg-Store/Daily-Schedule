@@ -1,4 +1,4 @@
-const CACHE='discipline-ladder-v9';
+const CACHE='discipline-ladder-v10';
 const ASSETS=['./','./index.html','./manifest.json','./app.js','./icon-192.png','./icon-512.png','./icon-192-maskable.png','./icon-512-maskable.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>Promise.all(ASSETS.map(u=>fetch(u,{cache:'no-cache'}).then(r=>r.ok?c.put(u,r):null).catch(()=>null)))))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
